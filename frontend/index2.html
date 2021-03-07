@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <style>
+    body {
+      background-color: rgba(21, 32, 43, 1.00);
+      color: rgba(255, 255, 255, 1.00);
+    }
+
+    .popup-container {
+      position: absolute;
+      top: 0px;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(115, 125, 134, 0.4);
+      color: rgba(255, 255, 255, 1.00);
+      /* font-size: 15px; */
+      font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .popup-root {
+      background-color: rgba(21, 32, 43, 1.00);
+      border-radius: 16px;
+      max-width: 95vw;
+      /* min-width: 600px; */
+      width: 100%;
+      max-height: 95vh;
+      min-height: 400px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+
+    .bird {
+      height: 2rem;
+      fill: rgb(255, 255, 255);
+    }
+
+    .top {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 53px;
+    }
+
+    .bottom {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      height: 100%;
+      margin-left: 32px;
+      margin-right: 32px;
+      margin-bottom: 32px;
+
+    }
+
+    .disabled {
+      opacity: 0.5;
+    }
+
+    .button {
+      margin-top: 12px;
+      box-sizing: border-box;
+      min-height: 40px;
+      background-color: rgba(29, 161, 242, 1.00);
+      border-color: rgba(29, 161, 242, 1.00);
+      color:rgb(255, 255, 255);
+      border-style: solid;
+      border-radius: 9999px;
+      padding-top: 1em;
+      padding-bottom: 1em;
+      font-weight: 700;
+      font-size: 15px;
+      width: 80%;
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      outline: none;
+    }
+
+    .button span {
+      cursor: pointer;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button span:after {
+      content: '>>';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
+    }
+
+    .button:hover span {
+      padding-right: 25px;
+    }
+
+    .button:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+
+    .button_2 {
+      margin-top: 12px;
+      box-sizing: border-box;
+      min-height: 40px;
+      background-color: rgba(0, 0, 0, 0);
+      border-color: rgba(29, 161, 242, 1.00);
+      color: rgba(29, 161, 242, 1.00);
+      border-style: solid;
+      border-radius: 9999px;
+      padding-top: 1em;
+      padding-bottom: 1em;
+      font-weight: 700;
+      font-size: 15px;
+      width: 80%;
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      outline: none;
+    }
+
+    .button_2 span {
+      cursor: pointer;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button_2 span:after {
+      content: '<<';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      left: -20px;
+      transition: 0.5s;
+    }
+
+    .button_2:hover span {
+      padding-left: 25px;
+    }
+
+    .button_2:hover span:after {
+      opacity: 1;
+      left: 0;
+    }
+
+    .timer {
+      animation: timer 10s steps(10, start);
+      animation-fill-mode: forwards;
+      background: linear-gradient(90deg, #6c6 50%, #ddd 50%);
+      border-radius: 50%;
+      height: 6em;
+      position: relative;
+      width: 6em;
+    }
+
+    .timer:after {
+      animation: mask 10s steps(5, start);
+      animation-fill-mode: forwards;
+      border-radius: 100% 0 0 100% / 50% 0 0 50%;
+      content: '';
+      height: 100%;
+      left: 0;
+      position: relative;
+      top: 0;
+      transform-origin: 100% 50%;
+      width: 50%;
+    }
+
+    @keyframes timer {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes mask {
+      0% {
+        background: #ddd;
+        transform: rotate(0deg);
+      }
+
+      50% {
+        background: #ddd;
+        transform: rotate(-180deg);
+      }
+
+      50.01% {
+        background: #6c6;
+        transform: rotate(0deg);
+      }
+
+      100% {
+        background: #6c6;
+        transform: rotate(-180deg);
+      }
+
+    }
+
+    .input-text {
+      color: rgba(255, 255, 255, 1.00);
+      /* font-size: 15px; */
+      font: 19px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin-top: 30px;
+      margin-bottom: 30px;
+      white-space: pre-wrap;
+    }
+  </style>
+  <div class="popup-container">
+    <div class="popup-root">
+      <div class="top">
+        <svg class="bird" viewBox=" 0 0 24 24" aria-label="Twitter"
+          class="r-jwli3a r-4qtqp9 r-yyyyoo r-16y2uox r-lwhw9o r-dnmrzs r-bnwqim r-1plcrui r-lrvibr">
+          <g>
+            <path
+              d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z">
+            </path>
+          </g>
+        </svg>
+      </div>
+      <div class="bottom">
+        <!-- <div class="timer"></div>
+        <h1>Summary of what the user sent</h1>
+        <h1>NAh bro</h1> -->
+        <h1>Are you sure you want to send this?</h1>
+        <p class="input-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id dui eu augue pharetra condimentum eget sed diam. Sed augue diam, ullamcorper non purus vel, consequat venenatis sapien. 
+        </p>
+        <button class="button disabled"><span>Send </span></button>
+        <button class="button_2"><span>Back </span></button>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
