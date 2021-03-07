@@ -1,1 +1,5 @@
 # HolUp
+Hol’ Up is a chrome extension that aims to mitigate toxic behavior and hate speech on social media platforms such as Twitter that spread hatred, potentially lead to physical violence, and in general is detrimental to mental health. The detection of hatred can be a grey area as one cannot draw the line as exact as positive vs. negative, but rather the differences between non-hatred and hatred are more nuanced. Hatred detection is an ongoing area of research, where even the state-of-the-art methods suffer from interpretability problems and out-of-sample accuracy. We tackle this online issue and employ keyword detection using scraped offensive words from HateBase and an AI-backend to reinforce our hatred detections, which appear in the form of a popup window.
+
+# What it does
+Oftentimes we have an urge to say something we might later regret, or alternatively, we might not recognize the harm in our words. HolUp warns you before sending potentially harmful material, seeking to make users think and inform them before pushing to the internet.

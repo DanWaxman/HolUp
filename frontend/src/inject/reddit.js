@@ -31,7 +31,29 @@ inject(function () {
   // const old_addEventListener = addEventListener;
   console.log(window.old_addEventListener);
 
-  function addPopup(text) {
+
+  window.addEventListener("message", async function (event) {
+    // We only accept messages from ourselves
+    if (event.source != window)
+      return;
+
+    if (event.data && event.data.type === 'tartan') {
+      console.log('client:');
+      console.log(event.data);
+      let { result, text } = event.data;
+      if (result.hate_detected) {
+        addPopup(text, result);
+      } else {
+        window.send_tweet();
+      }
+
+    }
+  });
+  function evalText(text) {
+    var data = { type: "FROM_PAGE", text };
+    window.postMessage(data, "*");
+  }
+  function addPopup(text, result) {
     const w = 600;
     const h = 650;
     const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
@@ -124,6 +146,10 @@ inject(function () {
           animation: ease-in;
           opacity: 0.65;
           cursor: not-allowed;
+        }
+
+        .title {
+          text-align: center;
         }
     
         .button {
@@ -293,7 +319,6 @@ inject(function () {
           font: 19px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
           margin-top: 30px;
           margin-bottom: 30px;
-          white-space: pre-wrap;
         }
     
         @keyframes timer {
@@ -320,6 +345,35 @@ inject(function () {
             cursor: not-allowed;
           }
         }
+        .tooltip {
+          /* position: relative; */
+          display: inline;
+          border-bottom: 1px solid white; /* If you want dots under the hoverable text */
+          display: inline-block;
+        }
+        
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 100vw;
+          background-color: black;
+          color: #fff;
+          text-align: center;
+          padding: 5px 0;
+          border-radius: 6px;
+          bottom: 0px;
+          left: 0px;
+          right: 0px;
+         
+          /* Position the tooltip text - see examples below! */
+          position: absolute;
+          z-index: 1;
+        }
+        
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+        }
     
       </style>
       <div class="popup-container">
@@ -333,7 +387,7 @@ inject(function () {
             <!-- <div class="timer"></div>
             <h1>Summary of what the user sent</h1>
             <h1>NAh bro</h1> -->
-            <h1>Are you sure you want to send this?</h1>
+            <h1 class="title">Are you sure you want to send this?</h1>
             <p class="input-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id dui eu augue pharetra
               condimentum eget sed diam. Sed augue diam, ullamcorper non purus vel, consequat venenatis sapien.
             </p>
@@ -359,7 +413,20 @@ inject(function () {
       }, 10 * 1000);
     };
 
-    newWindow.document.getElementsByClassName('input-text')[0].innerText = text;
+    let output = text;
+    for (let each of Object.keys(result.keywords)) {
+      let idx = 0;
+      while (output.toLowerCase().indexOf(each.toLowerCase(), idx) >= 0) {
+        let loc = output.toLowerCase().indexOf(each.toLowerCase(), idx);
+        tmp = output.substring(0, loc) + `<span class="tooltip">${output.substring(loc, loc + each.length)}${result.keywords[each].definition.trim().length > 0 ? '<span class="tooltiptext">'+result.keywords[each].definition.trim()+'</span>' : ''}</span>`;
+        idx = tmp.length;
+        tmp += output.substring(loc + each.length);
+        output = tmp;
+      }
+      console.log(output);
+    }
+    console.log(output);
+    newWindow.document.getElementsByClassName('input-text')[0].innerHTML = output;
     console.log(newWindow.document.getElementsByClassName('button'));
     newWindow.document.getElementsByClassName('button')[0].onclick = function (e) {
       if (newWindow.enabled) {
@@ -417,7 +484,7 @@ inject(function () {
             window.send_tweet = function () {
               args[1].apply(self_, func_args);
             };
-            addPopup(reply_el.parentElement.parentElement.parentElement.getElementsByClassName('notranslate public-DraftEditor-content')[0].children[0].children[0].innerText);
+            evalText(reply_el.parentElement.parentElement.parentElement.getElementsByClassName('notranslate public-DraftEditor-content')[0].children[0].children[0].innerText);
             return;
           }
         }
@@ -431,7 +498,7 @@ inject(function () {
             args[1].apply(self_, func_args);
           };
 
-          addPopup(document.getElementsByClassName('notranslate public-DraftEditor-content')[0].children[0].children[0].innerText);
+          evalText(document.getElementsByClassName('notranslate public-DraftEditor-content')[0].children[0].children[0].innerText);
           return;
         }
         args[1].apply(self_, func_args);
@@ -476,4 +543,23 @@ inject(function () {
   // Element.prototype.removeEventListener = removeEventListener;
 
 
+});
+
+
+window.addEventListener("message", async function (event) {
+  // We only accept messages from ourselves
+  if (event.source != window)
+    return;
+
+  if (event.data.type && (event.data.type == "FROM_PAGE")) {
+    console.log("Content script received message: " + event.data.text);
+    console.log(axios);
+    let r = await axios.put('https://alanc.tk/hate_detection', { text: event.data.text });
+    console.log(r);
+    window.postMessage({
+      type: 'tartan',
+      result: r.data,
+      text: event.data.text
+    }, "*");
+  }
 });

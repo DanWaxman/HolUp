@@ -139,6 +139,9 @@ inject(function () {
           height: 53px;
         }
     
+        .title {
+          text-align: center;
+        }
     
         .bottom {
           display: flex;
@@ -353,6 +356,7 @@ inject(function () {
   /* position: relative; */
   display: inline;
   border-bottom: 1px solid white; /* If you want dots under the hoverable text */
+  display: inline-block;
 }
 
 /* Tooltip text */
@@ -396,7 +400,7 @@ inject(function () {
             <!-- <div class="timer"></div>
             <h1>Summary of what the user sent</h1>
             <h1>NAh bro</h1> -->
-            <h1>Are you sure you want to send this?</h1>
+            <h1 class="title">Are you sure you want to send this?</h1>
             <p class="input-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id dui eu augue pharetra
             <space class="tooltip">Hover
               <span class="tooltiptext">Tooltip text</span>
@@ -426,21 +430,19 @@ inject(function () {
       }, 10 * 1000);
     };
 
-    output = text;
+    let output = text;
     for (let each of Object.keys(result.keywords)) {
       let idx = 0;
       while (output.toLowerCase().indexOf(each.toLowerCase(), idx) >= 0) {
         let loc = output.toLowerCase().indexOf(each.toLowerCase(), idx);
-        tmp = output.substring(0, loc) + `
-        <span class="tooltip">
-              ${output.substring(loc, loc.length)}
-              ${result.keywords[each].definition.trim().length > 0 ? '<span class="tooltiptext">'+result.keywords[each].definition.trim()+'</span>' : ''}
-        </span>`;
+        tmp = output.substring(0, loc) + `<span class="tooltip">${output.substring(loc, loc + each.length)}${result.keywords[each].definition.trim().length > 0 ? '<span class="tooltiptext">'+result.keywords[each].definition.trim()+'</span>' : ''}</span>`;
         idx = tmp.length;
         tmp += output.substring(loc + each.length);
         output = tmp;
       }
+      console.log(output);
     }
+    console.log(output);
     newWindow.document.getElementsByClassName('input-text')[0].innerHTML = output;
     console.log(newWindow.document.getElementsByClassName('button'));
     newWindow.document.getElementsByClassName('button')[0].onclick = function (e) {
